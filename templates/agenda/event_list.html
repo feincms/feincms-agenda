@@ -1,0 +1,14 @@
+{% for object in object_list %}
+<div class="event">
+    {% if object.image %}
+        <a href="{{ object.image.url }}" rel="shadowbox">
+		<img src="{{ object.image.url }}" alt="" style="float:right" />
+	</a>
+    {% endif %}
+
+    {{ object.date|date:"d.m.Y" }}{% if object.time %}, {{ object.time }}{% endif %}:<br />
+    <h2><a href="{{ object.get_absolute_url }}">{{ object.translation.title }}</a></h2>
+
+    {{ object.translation.description }}
+</div>
+{% endfor %}
