@@ -8,14 +8,13 @@ class EventTranslationForm(forms.ModelForm):
     
     description = forms.CharField(widget=forms.Textarea(
          attrs={'class':'vLargeTextField tinymce'}), required=False)
-
+    """
+    JS inclusion moved to admin template due to consolidation.
     class Media:
-        js = (
-            '/media/lib/tinymce/jquery.tinymce.js',
-            '/media/lib/tinymce/tiny_mce.js',
+        js = ('/media/sys/feinheit/tinymce/tiny_mce.js',
             '/media/js/admin/richtext.js',
         )
-
+    """
 admin.site.register(models.Event,
     list_display=('__unicode__', 'date', 'time'),
     inlines=[translations.admin_translationinline(models.EventTranslation,
