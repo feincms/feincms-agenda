@@ -7,8 +7,37 @@
     {% endif %}
 
     {{ object.date|date:"d.m.Y" }}{% if object.time %}, {{ object.time }}{% endif %}:<br />
-    <h2><a href="{{ object.get_absolute_url }}">{{ object.translation.title }}</a></h2>
-
-    {{ object.translation.description }}
+    <a class="ausklapp h2" href="#{{ object.translation.slug }}" id="a{{ object.translation.slug }}" name="a{{ object.translation.title }}">{{ object.translation.title }}</a>
+    <div class="ausklapp_content">
+    {{ object.translation.description|safe }}
+    </div>
 </div>
 {% endfor %}
+
+{% comment %}
+Aufklapp JS:
+Benötigt jQuery.scrollTo für scrollTo.
+<script>
+$(function(){
+    $('a.ausklapp').click(function() {
+        $(this).children('p').toggleClass('open');
+        $(this).next().slideToggle(500, function(){
+            $.scrollTo($(this), 500);
+            });
+        return false;
+    }).next().hide();
+    // $('a.ausklapp:first').children('p').toggleClass('open');
+    // $('a.ausklapp:first').next().slideDown();
+        //thaths the hash-shizzle
+    if ( window.location.hash != '') {
+        var hash=window.location.hash.substr(1)
+    //get hash, scroll to position
+        $('#a'+hash).children('p').addClass('open');
+        $('#a'+hash).next().slideDown(500,function(){
+            $.scrollTo($(this), 500);
+            });
+    }
+
+});
+</script>
+{% endcomment %}
