@@ -11,6 +11,7 @@ from django.template.loader import render_to_string
 from django.template.context import RequestContext
 from django.core.exceptions import ImproperlyConfigured
 from feincms.utils.html import cleanse
+from feincms.module.medialibrary.models import MediaFile
 
 
 class Event(models.Model, translations.TranslatedObjectMixin):
@@ -26,14 +27,14 @@ class Event(models.Model, translations.TranslatedObjectMixin):
                 raise ImproperlyConfigured, 'There was an error importing your %s cleanse_module!' % self.__name__        
         else:
             self.cleanse_module = cleanse
-        
-    date = models.DateField(_('date'), default=date.today)
-    time = models.CharField(_('time'), max_length=15, blank=True)
-    image = models.ImageField(_('image'), upload_to='event_images',
-        blank=True, null=True)
+    
+    datetime = models.DateTimeField(_('Date and Time'))    
+    #date = models.DateField(_('date'), default=date.today)
+    #time = models.CharField(_('time'), max_length=15, blank=True)
+    image = models.ForeignKey(MediaFile, blank=True, null=True)
 
     class Meta:
-        ordering = ['-date']
+        ordering = ['-datetime']
         verbose_name = _('event')
         verbose_name_plural = _('events')
 
@@ -74,9 +75,9 @@ class EventsContent(models.Model):
     def render(self, **kwargs):
         request = kwargs.get('request')
         if self.which == 'u':
-            object_list = Event.objects.filter(date__gte=date.today)
+            object_list = Event.objects.filter(datetime__gte=date.today)
         else:
-            object_list = Event.objects.filter(date__lte=date.today)
+            object_list = Event.objects.filter(datetime__lte=date.today)
         current_page = request.GET.get('page', 1)  
         page = Paginator(object_list, 20).page(current_page)
         return render_to_string('content/agenda/event_list.html', 
