@@ -77,7 +77,7 @@ class EventsContent(models.Model):
         if self.which == 'u':
             object_list = Event.objects.filter(datetime__gte=date.today)
         else:
-            object_list = Event.objects.filter(datetime__lte=date.today)
+            object_list = Event.objects.filter(date__lt=date.today)
         current_page = request.GET.get('page', 1)  
         page = Paginator(object_list, 20).page(current_page)
         return render_to_string('content/agenda/event_list.html', 
