@@ -28,7 +28,7 @@ class Event(models.Model, translations.TranslatedObjectMixin):
         else:
             self.cleanse_module = cleanse
     
-    datetime = models.DateTimeField(_('Date and Time'))    
+    datetime = models.DateTimeField(_('Date and Time'), db_index=True)    
     #date = models.DateField(_('date'), default=date.today)
     #time = models.CharField(_('time'), max_length=15, blank=True)
     image = models.ForeignKey(MediaFile, blank=True, null=True)
