@@ -1,7 +1,7 @@
-{% load applicationcontent_tags %}
+{% load applicationcontent_tags feinheit_base %}
 {% fragment request "title" prepend %}{{ object.translation.title }} - {% endfragment %}
 
-<div class="event">
+<div class="event" {% context_menu object %}>
     {% if object.image %}
         <img src="{{ object.image.url }}" alt="" style="float:right" />
     {% endif %}

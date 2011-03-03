@@ -1,5 +1,6 @@
+{% load feinheit_base %}
 {% for object in object_list %}
-<div class="event">
+<div class="event" {% context_menu object %}>
     {% if object.image %}
         <a href="{{ object.image.url }}" class="image">
 		<img src="{{ object.image.url }}" alt="" style="float:right" />
