@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime, timedelta
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -74,10 +74,14 @@ class EventsContent(models.Model):
 
     def render(self, **kwargs):
         request = kwargs.get('request')
+        now = datetime.now()
+        today = date.today()
+        if now.hour < 6: # Still shows tonights events.
+            today = date.today()-timedelta(days=1)
         if self.which == 'u':
-            object_list = Event.objects.filter(datetime__gte=date.today)
+            object_list = Event.objects.filter(datetime__gte=today)
         else:
-            object_list = Event.objects.filter(datetime__lt=date.today)
+            object_list = Event.objects.filter(datetime__lt=today)
         current_page = request.GET.get('page', 1)  
         page = Paginator(object_list, 20).page(current_page)
         return render_to_string('content/agenda/event_list.html', 

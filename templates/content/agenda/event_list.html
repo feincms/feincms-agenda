@@ -7,7 +7,7 @@
 	</a>
     {% endif %}
 
-    {{ object.date|date:"d.m.Y" }}{% if object.time %}, {{ object.time }}{% endif %}:<br />
+    {{ object.datetime|date:"SHORT_DATE_FORMAT" }} {{ object.datetime|time:"H:i" }}<br />
     <a class="ausklapp h2" href="#{{ object.translation.slug }}" id="a{{ object.translation.slug }}" name="a{{ object.translation.title }}">{{ object.translation.title }}</a>
     <div class="ausklapp_content">
     {{ object.translation.description|safe }}
