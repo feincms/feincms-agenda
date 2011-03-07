@@ -12,6 +12,7 @@ from django.template.context import RequestContext
 from django.core.exceptions import ImproperlyConfigured
 from feincms.utils.html import cleanse
 from feincms.module.medialibrary.models import MediaFile
+from django import forms
 
 
 class Event(models.Model, translations.TranslatedObjectMixin):
@@ -71,6 +72,14 @@ class EventsContent(models.Model):
         abstract = True
         verbose_name = _('event list')
         verbose_name_plural = _('event lists')
+        
+    @property
+    def media(self):
+        media = forms.Media()
+        media.add_js(('/media/sys/feinheit/js/jquery.scrollTo-min.js',))
+        
+        return media
+
 
     def render(self, **kwargs):
         request = kwargs.get('request')

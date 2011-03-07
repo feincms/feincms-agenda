@@ -19,11 +19,11 @@ urlpatterns = patterns('django.views.generic',
 if not settings.AGENDA_USE_CONTENT_TYPE:
     urlpatterns += patterns('django.views.generic',
         url(r'^$', 'list_detail.object_list', {
-            'queryset': Event.objects.filter(date__gte=date.today),
+            'queryset': Event.objects.filter(datetime__gte=date.today),
             'paginate_by': 20,
             }, name='agenda_event_list'),
         url(r'^archive/$', 'list_detail.object_list', {
-            'queryset': Event.objects.filter(date__lte=date.today),
+            'queryset': Event.objects.filter(datetime__lt=date.today),
             'paginate_by': 20,
             }, name='agenda_event_list'),
     )

@@ -1,12 +1,11 @@
 {% load feinheit_base feinheit_thumbnail %}
 {% for object in object_list %}
-<div class="event" {% context_menu object %}>
-    <div class="event-text {% if object.image %}span-11{% else %}span-15{% endif %}">
-        {{ object.datetime|date:"SHORT_DATE_FORMAT" }} {{ object.datetime|time:"H:i" }}<br />
-        <a class="ausklapp h2" href="#{{ object.translation.slug }}" id="a{{ object.translation.slug }}" name="a{{ object.translation.title }}">{{ object.translation.title }}</a>
-        <div class="ausklapp_content">
+<div class="append-bottom">
+<a class="ausklapp h2" href="#{{ object.translation.slug }}" id="a{{ object.translation.slug }}" name="a{{ object.translation.title }}"><span>{{ object.datetime|date:"j. N" }}: {{ object.translation.title }}</span></a>
+<div class="ausklapp_content event span-15 last prepend-top" {% context_menu object %}>
+    <div class="event-text {% if object.image %}span-11{% else %}span-15 last{% endif %}">
+        <p class="byline">{{ object.datetime|date:"SHORT_DATE_FORMAT" }} {{ object.datetime|time:"H:i" }}</p>
             {{ object.translation.description|safe }}
-        </div>
     </div>          
     {% if object.image %}
     <div class="event-image span-4 last">
@@ -16,27 +15,25 @@
 	</div>
     {% endif %}
 </div>
+</div>
 {% endfor %}
 
-{% comment %}
-Aufklapp JS:
-Benötigt jQuery.scrollTo für scrollTo.
 <script>
-$(function(){
+SQ.add(function(){
     $('a.ausklapp').click(function() {
-        $(this).children('p').toggleClass('open');
+        $(this).children('span').toggleClass('open');
         $(this).next().slideToggle(500, function(){
             $.scrollTo($(this), 500);
             });
         return false;
     }).next().hide();
-    // $('a.ausklapp:first').children('p').toggleClass('open');
-    // $('a.ausklapp:first').next().slideDown();
+    $('a.ausklapp:first').children('span').toggleClass('open');
+    $('a.ausklapp:first').next().slideDown();
         //thaths the hash-shizzle
     if ( window.location.hash != '') {
         var hash=window.location.hash.substr(1)
     //get hash, scroll to position
-        $('#a'+hash).children('p').addClass('open');
+        $('#a'+hash).children('span').addClass('open');
         $('#a'+hash).next().slideDown(500,function(){
             $.scrollTo($(this), 500);
             });
@@ -44,4 +41,9 @@ $(function(){
 
 });
 </script>
+
+{% comment %}
+Aufklapp JS:
+Benötigt jQuery.scrollTo für scrollTo.
+
 {% endcomment %}
