@@ -1,6 +1,5 @@
 from datetime import date
 
-from django.conf import settings as django_settings
 from django.conf.urls.defaults import *
 
 from feinheit.agenda.models import Event
@@ -13,8 +12,6 @@ urlpatterns = patterns('django.views.generic',
         'slug_field': 'translations__slug',
         }, name='agenda_event_detail'),
 )
-
-
 
 if not settings.AGENDA_USE_CONTENT_TYPE:
     urlpatterns += patterns('django.views.generic',

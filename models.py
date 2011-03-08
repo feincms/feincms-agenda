@@ -1,21 +1,20 @@
 from datetime import date, datetime, timedelta
 
 from django.db import models
+from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured
+from django.core.paginator import Paginator
+from django.template.context import RequestContext
+from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 
-from feinheit import translations
-from django.conf import settings
-#from feincms.views.generic.list_detail import object_list
-from django.core.paginator import Paginator
-from django.template.loader import render_to_string
-from django.template.context import RequestContext
-from django.core.exceptions import ImproperlyConfigured
 from feincms.utils.html import cleanse
 from feincms.module.medialibrary.models import MediaFile
 
+from feinheit import translations
+
 
 class Event(models.Model, translations.TranslatedObjectMixin):
-    
     def __init__(self, *args, **kwargs):
         super(Event, self).__init__(*args, **kwargs)
         self.cleanse = getattr(settings, 'EVENT_CLEANSE', False)
@@ -64,7 +63,6 @@ class EventTranslation(translations.Translation(Event)):
         return ('feinheit.agenda.urls/agenda_event_detail', (), {'slug': self.slug})
 
 class EventsContent(models.Model):
-
     which = models.CharField(max_length=1, choices=(('u',_('upcoming')),('p',_('past')),))
 
     class Meta:

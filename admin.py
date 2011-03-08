@@ -1,12 +1,14 @@
 from django import forms
 from django.contrib import admin
+from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
+
+from feincms.content.medialibrary.models import MediaFileWidget
+from feincms.module.medialibrary.models import MediaFile
+from feincms.templatetags import feincms_thumbnail
+
 from feinheit import translations
 from feinheit.agenda.models import Event, EventTranslation
-from feincms.templatetags import feincms_thumbnail
-from django.utils.safestring import mark_safe
-from feincms.module.medialibrary.models import MediaFile
-from feincms.content.medialibrary.models import MediaFileWidget
 
 def admin_thumbnail(obj):
     if obj.image.type == 'image':
