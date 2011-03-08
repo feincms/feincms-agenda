@@ -9,7 +9,7 @@
     </div>          
     {% if object.image %}
     <div class="event-image span-4 last">
-       <a href="{{ object.image.file.url }}" class="image">
+       <a href="{{ object.image.file.name|thumbnail:'600x600' }}" class="event-image image">
 		<img src="{{ object.image.file.name|cropscale:'150x180' }}" alt="" />
 	   </a>
 	</div>
@@ -38,6 +38,7 @@ SQ.add(function(){
             $.scrollTo($(this), 500);
             });
     }
+    $('.event-image').fancybox();
 
 });
 </script>

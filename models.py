@@ -76,7 +76,9 @@ class EventsContent(models.Model):
     @property
     def media(self):
         media = forms.Media()
-        media.add_js(('/media/sys/feinheit/js/jquery.scrollTo-min.js',))
+        media.add_js(('/media/sys/feinheit/js/jquery.scrollTo-min.js',
+                      'lib/fancybox/jquery.fancybox-1.3.1.pack.js'))
+        media.add_css({'all': ('lib/fancybox/jquery.fancybox-1.3.1.css', )})
         
         return media
 
