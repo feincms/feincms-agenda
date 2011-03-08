@@ -8,7 +8,8 @@ from feincms.module.medialibrary.models import MediaFile
 from feincms.templatetags import feincms_thumbnail
 
 from feinheit import translations
-from feinheit.agenda.models import Event, EventTranslation
+
+from models import Event, EventTranslation, Category
 
 def admin_thumbnail(obj):
     if obj.image.type == 'image':
@@ -32,7 +33,7 @@ admin_thumbnail.allow_tags = True
 
 class MediaFileAdminForm(forms.ModelForm):
     image = forms.ModelChoiceField(queryset=MediaFile.objects.filter(type='image'),
-                                widget=MediaFileWidget, label=_('media file'))
+                                widget=MediaFileWidget, label=_('media file'), required=False)
     class Meta:
         model = Event
 
@@ -42,10 +43,13 @@ class EventTranslationForm(forms.ModelForm):
          attrs={'class':'vLargeTextField tinymce'}), required=False)
 
 
+class CategoryAdmin(admin.ModelAdmin):
+    list_display=('name', 'slug')
+admin.site.register(Category, CategoryAdmin)
+
 class EventAdmin(admin.ModelAdmin):
-    model = Event
     form = MediaFileAdminForm
-    list_display=('__unicode__', 'datetime', admin_thumbnail )
+    list_display=('__unicode__', 'start_date', 'start_time', 'end_date', 'end_time', 'type', 'active', 'address', 'country', admin_thumbnail )
     inlines=[translations.admin_translationinline(EventTranslation,
         prepopulated_fields={'slug': ('title',)}, form=EventTranslationForm)]
 admin.site.register(Event, EventAdmin)

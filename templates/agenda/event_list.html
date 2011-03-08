@@ -1,0 +1,39 @@
+{% load feinheit_base feinheit_thumbnail i18n %}
+<table class="event-list">
+    <thead>
+        <tr>
+            <th>
+                {% trans "Name" %}
+            </th>
+            <th>
+                {% trans "Location" %}
+            </th>
+            <th>
+                {% trans "Start" %}
+            </th>
+            <th>
+                {% trans "End" %}
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for object in object_list %}
+    <div class="event" {% context_menu object %}>
+        <div class="event-text {% if object.image %}span-11{% else %}span-15{% endif %}">
+            {{ object.datetime|date:"SHORT_DATE_FORMAT" }} {{ object.datetime|time:"H:i" }}<br />
+            <a class="ausklapp h2" href="#{{ object.translation.slug }}" id="a{{ object.translation.slug }}" name="a{{ object.translation.title }}">{{ object.translation.title }}</a>
+            <div class="ausklapp_content">
+                {{ object.translation.description|safe }}
+            </div>
+        </div>          
+        {% if object.image %}
+        <div class="event-image span-4 last">
+           <a href="{{ object.image.file.url }}" class="image">
+    		<img src="{{ object.image.file.name|cropscale:'150x180' }}" alt="" />
+    	   </a>
+    	</div>
+        {% endif %}
+    </div>
+    {% endfor %}
+    </tbody>
+</table>
