@@ -8,6 +8,7 @@ from django.core.paginator import Paginator
 from django.template.context import RequestContext
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
+from django.core.urlresolvers import reverse
 
 from feincms.utils.html import cleanse
 from feincms.module.medialibrary.models import MediaFile
@@ -18,6 +19,9 @@ from feinheit.location.models import CountryField
 class Category(models.Model):
     name = models.CharField(_('name'), max_length=50)
     slug = models.SlugField(_('slug'), unique=True)
+    
+    def __unicode__(self):
+        return self.name
 
 
 class EventManager(translations.TranslatedObjectManager):
@@ -118,6 +122,11 @@ class Event(models.Model, translations.TranslatedObjectMixin):
             self.type = 'timed'
         if self.end_date and not self.start_time:
             self.type = 'multiday'
+    
+    @models.permalink
+    def get_absolute_url(self):
+        #TODO: Make this work
+        return ('feinheit.agenda.urls/event_detail', (), {'slug': self.translation.slug})
 
 
 class EventTranslation(translations.Translation(Event)):
@@ -137,10 +146,6 @@ class EventTranslation(translations.Translation(Event)):
         if getattr(self.parent, 'cleanse', False):
             self.description = self.parent.cleanse_module.cleanse_html(self.description)
         super(EventTranslation, self).save(*args, **kwargs)
-
-    @models.permalink
-    def get_absolute_url(self):
-        return ('feinheit.agenda.urls/agenda_event_detail', (), {'slug': self.slug})
 
 
 class EventsContent(models.Model):
