@@ -45,11 +45,14 @@ class EventTranslationForm(forms.ModelForm):
 
 class CategoryAdmin(admin.ModelAdmin):
     list_display=('name', 'slug')
+    prepopulated_fields = {'slug' : ('name',)}
 admin.site.register(Category, CategoryAdmin)
 
 class EventAdmin(admin.ModelAdmin):
     form = MediaFileAdminForm
+    save_on_top = True
     list_display=('__unicode__', 'start_date', 'start_time', 'end_date', 'end_time', 'type', 'active', 'address', 'country', admin_thumbnail )
+    list_filter = ('country', 'active')
     inlines=[translations.admin_translationinline(EventTranslation,
         prepopulated_fields={'slug': ('title',)}, form=EventTranslationForm)]
 admin.site.register(Event, EventAdmin)
