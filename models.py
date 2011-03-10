@@ -95,7 +95,7 @@ class Event(models.Model, translations.TranslatedObjectMixin):
         return self.start_date
     
     class Meta:
-        ordering = ['-start_date']
+        ordering = ['start_date']
         verbose_name = _('event')
         verbose_name_plural = _('events')
     
@@ -116,11 +116,11 @@ class Event(models.Model, translations.TranslatedObjectMixin):
         if not self.start_time and not self.end_date and not self.end_time:
             self.end_date = self.start_date
             self.type = 'oneday'
-        if (self.start_date == self.end_date) and not self.start_time and not self.end_time:
+        elif (self.start_date == self.end_date) and not (self.start_time or self.end_time):
             self.type = 'oneday'
-        if self.start_time:
+        elif self.start_time:
             self.type = 'timed'
-        if self.end_date and not self.start_time:
+        elif self.end_date and not self.start_time:
             self.type = 'multiday'
     
     @models.permalink
