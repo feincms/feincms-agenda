@@ -1,0 +1,21 @@
+{% load feinheit_base feinheit_thumbnail i18n %}
+<table class="event-list">
+    <thead>
+        <tr>
+            <th>{% trans "Name" %}</th>
+            <th>{% trans "Location" %}</th>
+            <th>{% trans "Start" %}</th>
+            <th>{% trans "End" %}</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for object in object_list %}
+        <tr {% context_menu object %}>
+            <td><a href="{{ object.translation.slug }}/">{{ object.translation.title }}</a></td>
+            <td>{{ object.address }}{% if object.address and object.country %}, {% endif %}{{ object.get_country_display }}</td>
+            <td>{{ object.start_date|date:"j. F Y" }} {{ object.start_time|time:"H:i" }}</td>
+            <td>{{ object.end_date|date:"j. F Y" }} {{ object.end_time|time:"H:i" }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
