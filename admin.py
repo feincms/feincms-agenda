@@ -38,7 +38,6 @@ class MediaFileAdminForm(forms.ModelForm):
         model = Event
 
 class EventTranslationForm(forms.ModelForm):
-    
     description = forms.CharField(widget=forms.Textarea(
          attrs={'class':'vLargeTextField tinymce'}), required=False)
 
@@ -52,7 +51,12 @@ class EventAdmin(admin.ModelAdmin):
     form = MediaFileAdminForm
     save_on_top = True
     list_display=('__unicode__', 'start_date', 'start_time', 'end_date', 'end_time', 'type', 'active', 'address', 'country', admin_thumbnail )
-    list_filter = ('country', 'active')
+    fieldsets = (
+        (None, {
+            'fields': ('active', ('start_date', 'start_time'), ('end_date', 'end_time'), 'image', ('address', 'country'), 'categories')
+        }),
+    )
+    list_filter = ('start_date', 'active')
     inlines=[translations.admin_translationinline(EventTranslation,
         prepopulated_fields={'slug': ('title',)}, form=EventTranslationForm)]
 admin.site.register(Event, EventAdmin)
