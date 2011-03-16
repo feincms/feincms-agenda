@@ -53,7 +53,7 @@ class Event(models.Model, translations.TranslatedObjectMixin):
         * Multi day events (start and end date is given)
         * Timed event (start date and time and end date and time are given)
     
-    Title, slug and description are translateable trough :model:'feinheit.agenda.EventTranslation'
+    Title, slug and description are translateable trough :model:`feinheit.agenda.EventTranslation`
     """
     
     def __init__(self, *args, **kwargs):
