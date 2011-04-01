@@ -51,11 +51,11 @@ class EventAdmin(admin.ModelAdmin):
     form = MediaFileAdminForm
     save_on_top = True
     list_display=('__unicode__', 'start_date', 'start_time', 'end_date', 'end_time', 'type', 'active', 'address', 'country', admin_thumbnail )
-    fieldsets = (
+    fieldsets = [
         (None, {
             'fields': ('active', ('start_date', 'start_time'), ('end_date', 'end_time'), 'image', ('address', 'country'), 'categories')
         }),
-    )
+    ]
     list_filter = ('start_date', 'active')
     inlines=[translations.admin_translationinline(EventTranslation,
         prepopulated_fields={'slug': ('title',)}, form=EventTranslationForm)]
