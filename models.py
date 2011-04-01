@@ -3,7 +3,7 @@ from datetime import date, datetime, timedelta, time
 from django.db import models
 from django.db.models import Q
 from django.conf import settings
-from django.core.exceptions import ImproperlyConfigured
+from django.core.exceptions import ImproperlyConfigured, ValidationError
 from django.core.paginator import Paginator
 from django.template.context import RequestContext
 from django.template.loader import render_to_string
@@ -123,6 +123,12 @@ class Event(models.Model, translations.TranslatedObjectMixin):
             self.type = 'timed'
         elif self.end_date and not self.start_time:
             self.type = 'multiday'
+        
+        #an event cant end before start
+        if self.end_date < self.start_date:
+            raise ValidationError(_('The Event cannot end before start (Start date <= End date)'))
+        if (self.end_date == self.start_date) and (self.end_time < self.start_time):
+            raise ValidationError(_('The Event cannot end before start (Start time <= End time)'))
     
     @models.permalink
     def get_absolute_url(self):
