@@ -4,15 +4,11 @@ from django.db import models
 from django.db.models import Q
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured, ValidationError
-from django.core.paginator import Paginator
-from django.template.context import RequestContext
-from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
-from django.core.urlresolvers import reverse
+#from django.core.urlresolvers import reverse
 
 from feincms.utils.html import cleanse
 from feincms.module.medialibrary.models import MediaFile
-from django import forms
 
 from feinheit import translations
 from feinheit.location.models import CountryField
@@ -154,45 +150,5 @@ class EventTranslation(translations.Translation(Event)):
             self.description = self.parent.cleanse_module.cleanse_html(self.description)
         super(EventTranslation, self).save(*args, **kwargs)
 
-
-class EventsContent(models.Model):
-    filter = models.CharField(max_length=1, choices=(
-                                ('a',_('all')),
-                                ('u',_('upcoming')),
-                                ('p',_('past')),
-                            ))
-    
-    class Meta:
-        abstract = True
-        verbose_name = _('event list')
-        verbose_name_plural = _('event lists')
-        
-    @property
-    def media(self):
-        media = forms.Media()
-        media.add_js(('/media/sys/feinheit/js/jquery.scrollTo-min.js',
-                      'lib/fancybox/jquery.fancybox-1.3.1.pack.js'))
-        media.add_css({'all': ('lib/fancybox/jquery.fancybox-1.3.1.css', )})
-        
-        return media
-
-    def render(self, request, context, **kwargs):
-        now = datetime.now()
-        today = date.today()
-        
-        if now.hour < 6: # Still shows tonights events.
-            today = date.today()-timedelta(days=1)
-            
-        if self.filter == 'u':
-            object_list = Event.objects.upcoming()
-        elif self.filter == 'p':
-            object_list = Event.objects.past()
-        else:
-            object_list = Event.objects.active()
-            
-        current_page = request.GET.get('page', 1)  
-        page = Paginator(object_list, 20).page(current_page)
-        
-        return render_to_string('content/agenda/event_list.html', 
-                {'object_list': object_list, 'page': page, },
-                context_instance=RequestContext(request))
+#import EventsContent for legacy
+from contents import EventsContent

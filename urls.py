@@ -2,6 +2,8 @@ from django.conf.urls.defaults import *
 
 from feinheit.agenda.models import Event
 
+from api import events
+
 
 urlpatterns = patterns('',
     url(r'^$', 'django.views.generic.list_detail.object_list', {
@@ -16,4 +18,6 @@ urlpatterns = patterns('',
         'queryset': Event.objects.past(),
         'paginate_by': 20,
         }, name='agenda_event_list'),
+                       
+    url('^api/events/', events, name='agenda_api_events'),
 )
