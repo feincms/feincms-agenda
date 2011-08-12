@@ -1,0 +1,28 @@
+{% load navigation_extras %}
+<nav>
+<div class="agenda-date-filter">
+    {% mark_current %}
+    {% if dates_dict %}
+    <ul class="ul-level-2">
+        <li class="li-level-2 first">
+            <a class="nav-level-2-link" href="{% url feinheit.agenda.urls/agenda_event_list  %}">Alle bevorstehenden Veranstaltungen</a>
+        </li>
+        {% for year, year_value in dates_dict.items %}
+        <li class="li-level-2 {% if forloop.last %}last{% endif %}">
+            <a class="nav-level-2-link" href="{% url feinheit.agenda.urls/agenda_year_list year=year %}">{{ year_value.date|date:"Y" }}</a>
+            {% if year_value.months %}
+            <ul class="ul-level-3">
+                {% for month, month_value in year_value.months.items %}
+                <li class="li-level-3 {% if forloop.first %}first{% endif %} {% if forloop.last %}last{% endif %}">
+                    <a class="ul-level-3-link" href="{% url feinheit.agenda.urls/agenda_month_list year=year month=month|stringformat:"02d" %}">{{ month_value.date|date:"F" }}</a>
+                </li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% endmark_current %}
+</div>
+</nav>

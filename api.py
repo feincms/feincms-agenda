@@ -13,6 +13,14 @@ def events(request):
     
     if id:
         events = Event.objects.active().filter(id=id)
+    elif filter == 'date':
+        events = Event.objects.active()
+        if 'year' in request.REQUEST:
+            events = events.filter(start_date__year=request.REQUEST['year'])
+        if 'month' in request.REQUEST:
+            events = events.filter(start_date__month=request.REQUEST['month'])
+        if 'day' in request.REQUEST:
+            events = events.filter(start_date__day=request.REQUEST['day'])
     elif filter == 'past':
         events = Event.objects.past()
     elif filter == 'active':
