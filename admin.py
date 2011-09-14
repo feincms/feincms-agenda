@@ -47,6 +47,7 @@ class CategoryAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug' : ('name',)}
 admin.site.register(Category, CategoryAdmin)
 
+
 class EventAdmin(admin.ModelAdmin):
     form = MediaFileAdminForm
     save_on_top = True
@@ -57,6 +58,7 @@ class EventAdmin(admin.ModelAdmin):
         }),
     ]
     list_filter = ('start_date', 'active')
+    raw_id_fields = ('feincms_page',)
     inlines=[translations.admin_translationinline(EventTranslation,
         prepopulated_fields={'slug': ('title',)}, form=EventTranslationForm)]
 admin.site.register(Event, EventAdmin)
