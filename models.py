@@ -80,7 +80,7 @@ class Event(models.Model, translations.TranslatedObjectMixin):
     
     image = models.ForeignKey(MediaFile, blank=True, null=True)
 
-    #feincms_page = models.ForeignKey(Page, blank=True, null=True, help_text=_('FeinCMS Page with additional infos'))
+    feincms_page = models.ForeignKey(Page, blank=True, null=True, help_text=_('FeinCMS Page with additional infos'))
     
     address = models.CharField(_('Address'), max_length=150, blank=True, null=True)
     country = CountryField(blank=True, null=True)

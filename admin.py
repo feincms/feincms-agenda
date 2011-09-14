@@ -54,7 +54,11 @@ class EventAdmin(admin.ModelAdmin):
     list_display=('__unicode__', 'start_date', 'start_time', 'end_date', 'end_time', 'type', 'active', 'address', 'country', admin_thumbnail )
     fieldsets = [
         (None, {
-            'fields': ('active', ('start_date', 'start_time'), ('end_date', 'end_time'), 'image', ('address', 'country'), 'categories')
+            'fields':   ('active',
+                        ('start_date', 'start_time'),
+                        ('end_date', 'end_time'),
+                        ('image', 'feincms_page'),
+                        ('address', 'country'), 'categories')
         }),
     ]
     list_filter = ('start_date', 'active')
