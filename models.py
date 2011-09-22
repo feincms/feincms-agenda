@@ -8,6 +8,7 @@ from django.utils.translation import ugettext_lazy as _
 #from django.core.urlresolvers import reverse
 
 from feincms.utils.html import cleanse
+from feincms.content.application.models import reverse
 from feincms.module.medialibrary.models import MediaFile
 from feincms.module.page.models import Page
 
@@ -133,10 +134,9 @@ class Event(models.Model, translations.TranslatedObjectMixin):
         if (self.end_date == self.start_date) and (self.end_time < self.start_time):
             raise ValidationError(_('The Event cannot end before start (Start time <= End time)'))
     
-    @models.permalink
     def get_absolute_url(self):
-        #TODO: Make this work
-        return ('feinheit.agenda.urls/event_detail', (), {'slug': self.translation.slug})
+        return reverse('feinheit.agenda.urls/agenda_event_detail', args=(),
+                       kwargs={'slug' : self.translation.slug })
 
 
 class EventTranslation(translations.Translation(Event)):
