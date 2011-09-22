@@ -10,7 +10,8 @@ to the category table. types are auto computed. there are 3 types:
 
 #. 'oneday': an event, that starts and ends on the same day, without a time specified.
 #. 'multiday': an event, that starts on an other day than it ends, but without start and end times specified.
-#. 'timed': an event, with start and end times specified.
+#. 'timed': an event, with start and end times specified on the same date.
+#. 'timedm': an event, with start and end times specified on different dates.
 
 The model tries to find the type according to the data entered.
 

@@ -31,9 +31,11 @@ admin_thumbnail.short_description = _('Image')
 admin_thumbnail.allow_tags = True
 
 
-class MediaFileAdminForm(forms.ModelForm):
+class EventAdminForm(forms.ModelForm):
     image = forms.ModelChoiceField(queryset=MediaFile.objects.filter(type='image'),
                                 widget=MediaFileWidget, label=_('media file'), required=False)
+    address = forms.CharField(widget=forms.Textarea(attrs={'rows':2, 'cols':40}))
+    
     class Meta:
         model = Event
 
@@ -49,7 +51,7 @@ admin.site.register(Category, CategoryAdmin)
 
 
 class EventAdmin(admin.ModelAdmin):
-    form = MediaFileAdminForm
+    form = EventAdminForm
     save_on_top = True
     list_display=('__unicode__', 'start_date', 'start_time', 'end_date', 'end_time', 'type', 'active', 'address', 'country', admin_thumbnail )
     fieldsets = [

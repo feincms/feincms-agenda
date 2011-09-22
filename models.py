@@ -76,6 +76,7 @@ class Event(models.Model, translations.TranslatedObjectMixin):
                              choices=(('oneday' ,_('One day event')),
                                       ('multiday',_('Multi day event')),
                                       ('timed',_('Timed event')),
+                                      ('timedm',_('Timed event multiple days')),
                              ))
     
     image = models.ForeignKey(MediaFile, blank=True, null=True)
@@ -119,7 +120,10 @@ class Event(models.Model, translations.TranslatedObjectMixin):
         elif (self.start_date == self.end_date) and not (self.start_time or self.end_time):
             self.type = 'oneday'
         elif self.start_time:
-            self.type = 'timed'
+            if self.start_date == self.end_date:
+                self.type = 'timed'
+            else:
+                self.type = 'timedm'
         elif self.end_date and not self.start_time:
             self.type = 'multiday'
         
