@@ -7,7 +7,11 @@ from django.core.exceptions import ImproperlyConfigured, ValidationError
 from django.utils.translation import ugettext_lazy as _
 #from django.core.urlresolvers import reverse
 
-from feincms.utils.html import cleanse
+try:
+    import feincms_cleanse as cleanse
+except ImportError:  # Use deprecated location
+    from feincms.utils.html import cleanse
+
 from feincms.content.application.models import reverse
 from feincms.module.medialibrary.models import MediaFile
 from feincms.module.page.models import Page
@@ -18,7 +22,7 @@ from feinheit.location.models import CountryField
 class Category(models.Model):
     name = models.CharField(_('name'), max_length=50)
     slug = models.SlugField(_('slug'), unique=True)
-    
+
     def __unicode__(self):
         return self.name
 
@@ -26,21 +30,21 @@ class Category(models.Model):
 class EventManager(translations.TranslatedObjectManager):
     def active(self):
         return self.filter(active=True)
-    
+
     def upcoming(self):
         """ returns all upcoming and ongoing events """
         today = date.today()
         if datetime.now().hour < 6:
             today = today-timedelta(days=1)
-        
+
         return self.active().filter(Q(start_date__gte=today) | Q(end_date__gte=today))
-    
+
     def past(self):
         """ returns all past events """
         today = date.today()
         if datetime.now().hour < 6:
             today = today-timedelta(days=1)
-        
+
         return self.active().filter(Q(start_date__lt=today) & Q(end_date__lt=today))
 
 
@@ -50,10 +54,10 @@ class Event(models.Model, translations.TranslatedObjectMixin):
         * One day events (only start date is given)
         * Multi day events (start and end date is given)
         * Timed event (start date and time and end date and time are given)
-    
+
     Title, slug and description are translateable trough :model:`feinheit.agenda.EventTranslation`
     """
-    
+
     def __init__(self, *args, **kwargs):
         super(Event, self).__init__(*args, **kwargs)
         self.cleanse = getattr(settings, 'EVENT_CLEANSE', False)
@@ -65,44 +69,44 @@ class Event(models.Model, translations.TranslatedObjectMixin):
                 raise ImproperlyConfigured, 'There was an error importing your %s cleanse_module!' % self.__name__
         else:
             self.cleanse_module = cleanse
-            
+
     active = models.BooleanField(_('Active'))
-    
+
     start_date = models.DateField(_('Start date'))
     start_time = models.TimeField(_('Start time'), blank=True, null=True, help_text=_('leave blank for full day event'))
     end_date = models.DateField(_('End date'), blank=True, null=True, help_text=_('leave blank for one day event'))
     end_time = models.TimeField(_('End time'), blank=True, null=True, help_text=_('leave blank for full day events'))
-    
+
     type = models.CharField(_('Type'), max_length=10, help_text=_('Cachefield for the computed type'), editable=False,
                              choices=(('oneday' ,_('One day event')),
                                       ('multiday',_('Multi day event')),
                                       ('timed',_('Timed event')),
                                       ('timedm',_('Timed event multiple days')),
                              ))
-    
+
     image = models.ForeignKey(MediaFile, blank=True, null=True)
 
     feincms_page = models.ForeignKey(Page, blank=True, null=True, help_text=_('FeinCMS Page with additional infos'))
-    
+
     address = models.CharField(_('Address'), max_length=150, blank=True, null=True)
     country = CountryField(blank=True, null=True)
-    
+
     categories = models.ManyToManyField(Category, blank=True, null=True)
 
     objects = EventManager()
-    
+
     @property
     def datetime(self):
         """ datetime property for legacy support """
         return self.start_date
-    
+
     class Meta:
         ordering = ['start_date']
         verbose_name = _('event')
         verbose_name_plural = _('events')
-    
+
     def clean(self):
-        """ tries to find the type of the event and stores it in the type field. 
+        """ tries to find the type of the event and stores it in the type field.
             in this process, it guesses possible forgotten values
         """
         if self.start_time and self.end_date and not self.end_time:
@@ -114,7 +118,7 @@ class Event(models.Model, translations.TranslatedObjectMixin):
                 self.end_date = self.start_date
             else:
                 self.end_date = self.start_date + timedelta(days=1)
-        
+
         if not self.start_time and not self.end_date and not self.end_time:
             self.end_date = self.start_date
             self.type = 'oneday'
@@ -127,13 +131,13 @@ class Event(models.Model, translations.TranslatedObjectMixin):
                 self.type = 'timedm'
         elif self.end_date and not self.start_time:
             self.type = 'multiday'
-        
+
         #an event cant end before start
         if self.end_date < self.start_date:
             raise ValidationError(_('The Event cannot end before start (Start date <= End date)'))
         if (self.end_date == self.start_date) and (self.end_time < self.start_time):
             raise ValidationError(_('The Event cannot end before start (Start time <= End time)'))
-    
+
     def get_absolute_url(self):
         return reverse('feinheit.agenda.urls/agenda_event_detail', args=(),
                        kwargs={'slug' : self.translation.slug })
@@ -147,10 +151,10 @@ class EventTranslation(translations.Translation(Event)):
     class Meta:
         verbose_name = _('event translation')
         verbose_name_plural = _('event translations')
-    
+
     def __unicode__(self):
         return self.title
-    
+
     def save(self, *args, **kwargs):
         # TODO: Move this to the form?
         if getattr(self.parent, 'cleanse', False):
