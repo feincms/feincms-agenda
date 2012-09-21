@@ -12,9 +12,9 @@ except ImportError:  # Use deprecated location
     from feincms.utils.html import cleanse
 
 from feincms.content.application.models import app_reverse
+from feincms.module.medialibrary.fields import MediaFileForeignKey
 from feincms.module.medialibrary.models import MediaFile
 from feincms.module.page.models import Page
-
 from feincms import translations
 
 from feinheit.location.models import CountryField  # TODO django_countries?
@@ -68,6 +68,8 @@ class Event(models.Model, translations.TranslatedObjectMixin):
         cm = getattr(settings, 'CLEANSE_MODULE', None)
         if cm:
             try:
+                # TODO importlib or something else; or reuse the
+                # richtext field from FeinCMS and add cleansing there
                 self.cleanse_module = __import__(cm, fromlist=True)
             except (ValueError, ImportError):
                 raise ImproperlyConfigured, 'There was an error importing your %s cleanse_module!' % self.__name__
@@ -77,37 +79,47 @@ class Event(models.Model, translations.TranslatedObjectMixin):
     active = models.BooleanField(_('Active'))
 
     start_date = models.DateField(_('Start date'))
-    start_time = models.TimeField(_('Start time'), blank=True, null=True, help_text=_('leave blank for full day event'))
-    end_date = models.DateField(_('End date'), blank=True, null=True, help_text=_('leave blank for one day event'))
-    end_time = models.TimeField(_('End time'), blank=True, null=True, help_text=_('leave blank for full day events'))
+    start_time = models.TimeField(_('Start time'), blank=True, null=True,
+        help_text=_('leave blank for full day event'))
+    end_date = models.DateField(_('End date'), blank=True, null=True,
+        help_text=_('leave blank for one day event'))
+    end_time = models.TimeField(_('End time'), blank=True, null=True,
+        help_text=_('leave blank for full day events'))
 
-    type = models.CharField(_('Type'), max_length=10, help_text=_('Cachefield for the computed type'), editable=False,
+    type = models.CharField(_('Type'), max_length=10,
+        help_text=_('Cachefield for the computed type'), editable=False,
                              choices=(('oneday' ,_('One day event')),
                                       ('multiday',_('Multi day event')),
                                       ('timed',_('Timed event')),
                                       ('timedm',_('Timed event multiple days')),
                              ))
 
-    image = models.ForeignKey(MediaFile, blank=True, null=True)
+    image = MediaFileForeignKey(MediaFile, blank=True, null=True)
 
-    feincms_page = models.ForeignKey(Page, blank=True, null=True, help_text=_('FeinCMS Page with additional infos'))
+    feincms_page = models.ForeignKey(Page, blank=True, null=True,
+        help_text=_('FeinCMS Page with additional infos'))
 
     address = models.CharField(_('Address'), max_length=150, blank=True, null=True)
     country = CountryField(blank=True, null=True)
 
-    categories = models.ManyToManyField(Category, blank=True, null=True)
+    categories = models.ManyToManyField(Category, blank=True, null=True,
+        verbose_name=_('categories'))
 
     objects = EventManager()
-
-    @property
-    def datetime(self):
-        """ datetime property for legacy support """
-        return self.start_date
 
     class Meta:
         ordering = ['start_date']
         verbose_name = _('event')
         verbose_name_plural = _('events')
+
+    def get_absolute_url(self):
+        return app_reverse('agenda_event_detail', 'feincms_agenda.urls',
+            args=(), kwargs={'slug': self.translation.slug})
+
+    @property
+    def datetime(self):
+        """ datetime property for legacy support """
+        return self.start_date
 
     def clean(self):
         """ tries to find the type of the event and stores it in the type field.
@@ -136,15 +148,11 @@ class Event(models.Model, translations.TranslatedObjectMixin):
         elif self.end_date and not self.start_time:
             self.type = 'multiday'
 
-        #an event cant end before start
+        # an event can't end before it starts
         if self.end_date < self.start_date:
             raise ValidationError(_('The Event cannot end before start (Start date <= End date)'))
         if (self.end_date == self.start_date) and (self.end_time < self.start_time):
             raise ValidationError(_('The Event cannot end before start (Start time <= End time)'))
-
-    def get_absolute_url(self):
-        return app_reverse('agenda_event_detail', 'feincms_agenda.urls',
-            args=(), kwargs={'slug': self.translation.slug})
 
 
 class EventTranslation(translations.Translation(Event)):
@@ -162,5 +170,6 @@ class EventTranslation(translations.Translation(Event)):
     def save(self, *args, **kwargs):
         # TODO: Move this to the form?
         if getattr(self.parent, 'cleanse', False):
-            self.description = self.parent.cleanse_module.cleanse_html(self.description)
+            self.description = self.parent.cleanse_module.cleanse_html(
+                self.description)
         super(EventTranslation, self).save(*args, **kwargs)

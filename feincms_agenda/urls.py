@@ -1,8 +1,7 @@
 from django.conf.urls.defaults import *
 
-from feincms_agenda.models import Event
-
-from api import events
+from .api import events
+from .models import Event
 
 
 urlpatterns = patterns('',
