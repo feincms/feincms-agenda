@@ -87,16 +87,23 @@ class EventDateFilterContent(models.Model):
         dates = Event.objects.active().dates('start_date', 'day', order="DESC")
 
         for date in dates:
+            # TODO unstupidify this code using setdefault etc.
             if not date.year in dates_dict:
-                dates_dict[date.year] = SortedDict({'date' : datetime(date.year, 1, 1),
-                                                    'months' : SortedDict()})
+                dates_dict[date.year] = SortedDict([
+                    ('date', datetime(date.year, 1, 1)),
+                    ('months', SortedDict()),
+                    ])
+
             if not date.month in dates_dict[date.year]['months']:
-                dates_dict[date.year]['months'][date.month] = \
-                    SortedDict({'date' : datetime(date.year, date.month, 1),
-                                'days' : SortedDict()})
+                dates_dict[date.year]['months'][date.month] = SortedDict([
+                    ('date', datetime(date.year, date.month, 1)),
+                    ('days', SortedDict()),
+                    ])
+
             if not date.day in dates_dict[date.year]['months'][date.month]['days']:
-                dates_dict[date.year]['months'][date.month]['days'][date.day] = \
-                    SortedDict({'date' : datetime(date.year, date.month, date.day)})
+                dates_dict[date.year]['months'][date.month]['days'][date.day] = SortedDict([
+                    ('date': datetime(date.year, date.month, date.day)),
+                    ])
 
         return render_to_string('content/agenda/date_filter.html', {
             'content': self,
