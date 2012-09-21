@@ -20,9 +20,12 @@ Usage
 =====
 
 - add :mod:`feinheit.agenda` to your :setting:`INSTALLED_APPS`
-- you can either use the :class:`feinheit.agenda.models.EventsContent` or 
+- you can either use the :class:`feinheit.agenda.models.EventsContent` or
   add :mod:`feinheit.agenda.urls` as FeinCMS Application
 
 **hint:** use the application, if you want to have a detail page with own url for every event.
-if you just want to display a simple eventlist, use the content. 
+if you just want to display a simple eventlist, use the content.
 """
+
+VERSION = (0, 0, 1, 'pre')
+__version__ = '.'.join(map(str, VERSION))

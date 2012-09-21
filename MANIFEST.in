@@ -1,0 +1,7 @@
+include LICENSE
+include MANIFEST.in
+include README.rst
+include setuplib.py
+recursive-include feincms_agenda/static *
+recursive-include feincms_agenda/locale *
+recursive-include feincms_agenda/templates *
