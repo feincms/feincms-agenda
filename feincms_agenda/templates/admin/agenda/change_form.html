@@ -4,13 +4,15 @@
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
 <script type="text/javascript">
     var feincms = {
+      // TODO Uhhm...?? Stop adding jQuery twice, stop using this stupid
+      // raw_id_fields emulation and stop referring to /media/sys/ below
         "jQuery": jQuery
     };
 	(function($){
 	    $(function(){
 			$('#id_image').each(function(){
 	            var elem = $(this);
-	
+
 	            elem.siblings('span').remove().end();
 	            elem.css('width', '50px').after("<span class=\"lupe mediafile\" id=\"lookup_"+this.id+"\"> <img src=\"{% admin_media_prefix %}img/admin/selector-search.gif\" alt=\"{% trans "Search" %}\" /></span>");
 	        });
