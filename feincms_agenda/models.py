@@ -5,19 +5,20 @@ from django.db.models import Q
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured, ValidationError
 from django.utils.translation import ugettext_lazy as _
-#from django.core.urlresolvers import reverse
 
 try:
     import feincms_cleanse as cleanse
 except ImportError:  # Use deprecated location
     from feincms.utils.html import cleanse
 
-from feincms.content.application.models import reverse
+from feincms.content.application.models import app_reverse
 from feincms.module.medialibrary.models import MediaFile
 from feincms.module.page.models import Page
 
-from feinheit import translations
-from feinheit.location.models import CountryField
+from feincms import translations
+
+from feinheit.location.models import CountryField  # TODO django_countries?
+
 
 class Category(models.Model):
     name = models.CharField(_('name'), max_length=50)
@@ -50,12 +51,15 @@ class EventManager(translations.TranslatedObjectManager):
 
 class Event(models.Model, translations.TranslatedObjectMixin):
     """
-    Stores an event entry. An event needs to have at least a start date. There are 3 possible types of events:
-        * One day events (only start date is given)
-        * Multi day events (start and end date is given)
-        * Timed event (start date and time and end date and time are given)
+    Stores an event entry. An event needs to have at least a start date. There
+    are 3 possible types of events:
 
-    Title, slug and description are translateable trough :model:`feinheit.agenda.EventTranslation`
+    * One day events (only start date is given)
+    * Multi day events (start and end date is given)
+    * Timed event (start date and time and end date and time are given)
+
+    Title, slug and description are translateable trough
+    :model:`feincms_agenda.models.EventTranslation`
     """
 
     def __init__(self, *args, **kwargs):
@@ -139,8 +143,8 @@ class Event(models.Model, translations.TranslatedObjectMixin):
             raise ValidationError(_('The Event cannot end before start (Start time <= End time)'))
 
     def get_absolute_url(self):
-        return reverse('feinheit.agenda.urls/agenda_event_detail', args=(),
-                       kwargs={'slug' : self.translation.slug })
+        return app_reverse('agenda_event_detail', 'feincms_agenda.urls',
+            args=(), kwargs={'slug': self.translation.slug})
 
 
 class EventTranslation(translations.Translation(Event)):
@@ -160,6 +164,3 @@ class EventTranslation(translations.Translation(Event)):
         if getattr(self.parent, 'cleanse', False):
             self.description = self.parent.cleanse_module.cleanse_html(self.description)
         super(EventTranslation, self).save(*args, **kwargs)
-
-#import EventsContent for legacy
-from contents import EventsContent

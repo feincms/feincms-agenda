@@ -1,1 +1,2 @@
-<div id="event_map" data-api="{% url feinheit.agenda.urls/agenda_api_events %}"></div>
+{% load applicationcontent_tags %}
+<div id="event_map" data-api="{% app_reverse "agenda_api_events" "feincms_agenda.urls" %}"></div>

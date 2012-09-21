@@ -1,6 +1,6 @@
 from django.conf.urls.defaults import *
 
-from feinheit.agenda.models import Event
+from feincms_agenda.models import Event
 
 from api import events
 
@@ -18,7 +18,7 @@ urlpatterns = patterns('',
         'queryset': Event.objects.past(),
         'paginate_by': 20,
         }, name='agenda_archive_list'),
-    
+
     url(r'^filter/(?P<year>\d{4})/$', 'django.views.generic.date_based.archive_year', {
         'queryset' : Event.objects.active(),
         'date_field' : 'start_date',
@@ -33,6 +33,6 @@ urlpatterns = patterns('',
         'allow_future' : True,
         'template_name' : 'agenda/event_list.html',
         }, name="agenda_month_list"),
-    
+
     url('^api/events/', events, name='agenda_api_events'),
 )
