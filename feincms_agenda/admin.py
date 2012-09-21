@@ -3,41 +3,19 @@ from django.contrib import admin
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
-from feincms.content.medialibrary.models import MediaFileWidget
-from feincms.module.medialibrary.models import MediaFile
-from feincms.templatetags import feincms_thumbnail
+from feincms.module.medialibrary.thumbnail import admin_thumbnail
+from feincms.translations import admin_translationinline
 
-from feinheit import translations
-
-from models import Event, EventTranslation, Category
-
-def admin_thumbnail(obj):
-    if obj.image.type == 'image':
-        image = None
-        try:
-            image = feincms_thumbnail.thumbnail(obj.image.file.name, '100x60')
-        except:
-            pass
-
-        if image:
-            return mark_safe(u"""
-                <a href="%(url)s" target="_blank">
-                    <img src="%(image)s" alt="" />
-                </a>""" % {
-                    'url': obj.image.file.url,
-                    'image': image,})
-    return ''
-admin_thumbnail.short_description = _('Image')
-admin_thumbnail.allow_tags = True
+from .models import Event, EventTranslation, Category
 
 
 class EventAdminForm(forms.ModelForm):
-    image = forms.ModelChoiceField(queryset=MediaFile.objects.filter(type='image'),
-                                widget=MediaFileWidget, label=_('media file'), required=False)
-    address = forms.CharField(widget=forms.Textarea(attrs={'rows':2, 'cols':40}))
-    
+    address = forms.CharField(
+        widget=forms.Textarea(attrs={'rows':2, 'cols':40}))
+
     class Meta:
         model = Event
+
 
 class EventTranslationForm(forms.ModelForm):
     description = forms.CharField(widget=forms.Textarea(
@@ -47,13 +25,14 @@ class EventTranslationForm(forms.ModelForm):
 class CategoryAdmin(admin.ModelAdmin):
     list_display=('name', 'slug')
     prepopulated_fields = {'slug' : ('name',)}
-admin.site.register(Category, CategoryAdmin)
 
 
 class EventAdmin(admin.ModelAdmin):
     form = EventAdminForm
     save_on_top = True
-    list_display=('__unicode__', 'start_date', 'start_time', 'end_date', 'end_time', 'type', 'active', 'address', 'country', admin_thumbnail )
+    list_display = ('__unicode__', 'start_date', 'start_time',
+        'end_date', 'end_time', 'type', 'active', 'address',
+        'country', 'admin_thumbnail')
     fieldsets = [
         (None, {
             'fields':   ('active',
@@ -64,7 +43,30 @@ class EventAdmin(admin.ModelAdmin):
         }),
     ]
     list_filter = ('start_date', 'active')
-    raw_id_fields = ('feincms_page',)
-    inlines=[translations.admin_translationinline(EventTranslation,
-        prepopulated_fields={'slug': ('title',)}, form=EventTranslationForm)]
+    raw_id_fields = ('feincms_page', 'image')
+    inlines=[
+        admin_translationinline(EventTranslation,
+            prepopulated_fields={'slug': ('title',)},
+            form=EventTranslationForm),
+        ]
+
+    def admin_thumbnail(self, instance):
+        if not instance.image:
+            return u''
+        image = admin_thumbnail(instance.image)
+        if image:
+            return mark_safe(u"""
+                <a href="%(url)s" target="_blank">
+                    <img src="%(image)s" alt="" />
+                </a>""" % {
+                    'url': obj.file.url,
+                    'image': image,
+                    })
+
+        return u''
+    admin_thumbnail.short_description = _('Image')
+    admin_thumbnail.allow_tags = True
+
+
+admin.site.register(Category, CategoryAdmin)
 admin.site.register(Event, EventAdmin)
