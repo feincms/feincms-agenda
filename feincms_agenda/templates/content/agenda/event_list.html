@@ -1,12 +1,12 @@
-{% load feinheit_base feinheit_thumbnail %}
+{% load feincms_thumbnail %}
 {% for object in object_list %}
 <div class="append-bottom">
 <a class="ausklapp h2" href="#{{ object.translation.slug }}" id="a{{ object.translation.slug }}" name="a{{ object.translation.title }}"><span>{{ object.datetime|date:"j. N" }}: {{ object.translation.title }}</span></a>
-<div class="ausklapp_content event span-15 last prepend-top" {% context_menu object %}>
+<div class="ausklapp_content event span-15 last prepend-top">
     <div class="event-text {% if object.image %}span-11{% else %}span-15 last{% endif %}">
         <p class="byline">{{ object.datetime|date:"SHORT_DATE_FORMAT" }} {{ object.datetime|time:"H:i" }}</p>
             {{ object.translation.description|safe }}
-    </div>          
+    </div>
     {% if object.image %}
     <div class="event-image span-4 last">
        <a href="{{ object.image.file.name|thumbnail:'600x600' }}" class="event-image image">
