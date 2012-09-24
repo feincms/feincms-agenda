@@ -102,7 +102,7 @@ class EventDateFilterContent(models.Model):
 
             if not date.day in dates_dict[date.year]['months'][date.month]['days']:
                 dates_dict[date.year]['months'][date.month]['days'][date.day] = SortedDict([
-                    ('date': datetime(date.year, date.month, date.day)),
+                    ('date', datetime(date.year, date.month, date.day)),
                     ])
 
         return render_to_string('content/agenda/date_filter.html', {
