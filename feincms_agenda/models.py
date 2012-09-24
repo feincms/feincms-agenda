@@ -17,7 +17,7 @@ from feincms.module.medialibrary.models import MediaFile
 from feincms.module.page.models import Page
 from feincms import translations
 
-from feinheit.location.models import CountryField  # TODO django_countries?
+from .fields import CountryField
 
 
 class Category(models.Model):
