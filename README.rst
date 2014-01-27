@@ -1,3 +1,5 @@
+**OBSOLETE** Use https://github.com/feinheit/feincms-elephantagenda/ instead.
+
 ==============
 feincms-agenda
 ==============
