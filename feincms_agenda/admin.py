@@ -59,7 +59,7 @@ class EventAdmin(admin.ModelAdmin):
                 <a href="%(url)s" target="_blank">
                     <img src="%(image)s" alt="" />
                 </a>""" % {
-                    'url': obj.file.url,
+                    'url': instance.image.url,
                     'image': image,
                     })
 
