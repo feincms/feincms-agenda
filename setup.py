@@ -6,10 +6,12 @@ import setuplib
 
 packages, package_data = setuplib.find_packages('feincms_agenda')
 
-setup(name='feincms-agenda',
+setup(
+    name='feincms-agenda',
     version=__import__('feincms_agenda').__version__,
     description='A FeinCMS-based link list',
-    long_description=open(os.path.join(os.path.dirname(__file__), 'README.rst')).read(),
+    long_description=open(
+        os.path.join(os.path.dirname(__file__), 'README.rst')).read(),
     author='FEINHEIT GmbH',
     author_email='kontakt@feinheit.ch',
     url='http://github.com/feincms/feincms-agenda/',

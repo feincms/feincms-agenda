@@ -38,7 +38,8 @@ class EventManager(translations.TranslatedObjectManager):
         if datetime.now().hour < 6:
             today = today-timedelta(days=1)
 
-        return self.active().filter(Q(start_date__gte=today) | Q(end_date__gte=today))
+        return self.active().filter(
+            Q(start_date__gte=today) | Q(end_date__gte=today))
 
     def past(self):
         """ returns all past events """
@@ -46,7 +47,8 @@ class EventManager(translations.TranslatedObjectManager):
         if datetime.now().hour < 6:
             today = today-timedelta(days=1)
 
-        return self.active().filter(Q(start_date__lt=today) & Q(end_date__lt=today))
+        return self.active().filter(
+            Q(start_date__lt=today) & Q(end_date__lt=today))
 
 
 class Event(models.Model, translations.TranslatedObjectMixin):
@@ -72,37 +74,48 @@ class Event(models.Model, translations.TranslatedObjectMixin):
                 # richtext field from FeinCMS and add cleansing there
                 self.cleanse_module = __import__(cm, fromlist=True)
             except (ValueError, ImportError):
-                raise ImproperlyConfigured, 'There was an error importing your %s cleanse_module!' % self.__name__
+                raise ImproperlyConfigured(
+                    'There was an error importing your %s cleanse_module!' % (
+                        self.__name__,))
         else:
             self.cleanse_module = cleanse
 
     active = models.BooleanField(_('Active'))
 
     start_date = models.DateField(_('Start date'))
-    start_time = models.TimeField(_('Start time'), blank=True, null=True,
+    start_time = models.TimeField(
+        _('Start time'), blank=True, null=True,
         help_text=_('leave blank for full day event'))
-    end_date = models.DateField(_('End date'), blank=True, null=True,
+    end_date = models.DateField(
+        _('End date'), blank=True, null=True,
         help_text=_('leave blank for one day event'))
-    end_time = models.TimeField(_('End time'), blank=True, null=True,
+    end_time = models.TimeField(
+        _('End time'), blank=True, null=True,
         help_text=_('leave blank for full day events'))
 
-    type = models.CharField(_('Type'), max_length=10,
-        help_text=_('Cachefield for the computed type'), editable=False,
-                             choices=(('oneday' ,_('One day event')),
-                                      ('multiday',_('Multi day event')),
-                                      ('timed',_('Timed event')),
-                                      ('timedm',_('Timed event multiple days')),
-                             ))
+    type = models.CharField(
+        _('Type'), max_length=10,
+        help_text=_('Cachefield for the computed type'),
+        editable=False,
+        choices=(
+            ('oneday', _('One day event')),
+            ('multiday', _('Multi day event')),
+            ('timed', _('Timed event')),
+            ('timedm', _('Timed event multiple days')),
+        ))
 
     image = MediaFileForeignKey(MediaFile, blank=True, null=True)
 
-    feincms_page = models.ForeignKey(Page, blank=True, null=True,
+    feincms_page = models.ForeignKey(
+        Page, blank=True, null=True,
         help_text=_('FeinCMS Page with additional infos'))
 
-    address = models.CharField(_('Address'), max_length=150, blank=True, null=True)
+    address = models.CharField(
+        _('Address'), max_length=150, blank=True, null=True)
     country = CountryField(blank=True, null=True)
 
-    categories = models.ManyToManyField(Category, blank=True, null=True,
+    categories = models.ManyToManyField(
+        Category, blank=True, null=True,
         verbose_name=_('categories'))
 
     objects = EventManager()
@@ -113,7 +126,8 @@ class Event(models.Model, translations.TranslatedObjectMixin):
         verbose_name_plural = _('events')
 
     def get_absolute_url(self):
-        return app_reverse('agenda_event_detail', 'feincms_agenda.urls',
+        return app_reverse(
+            'agenda_event_detail', 'feincms_agenda.urls',
             args=(), kwargs={'slug': self.translation.slug})
 
     @property
@@ -138,7 +152,8 @@ class Event(models.Model, translations.TranslatedObjectMixin):
         if not self.start_time and not self.end_date and not self.end_time:
             self.end_date = self.start_date
             self.type = 'oneday'
-        elif (self.start_date == self.end_date) and not (self.start_time or self.end_time):
+        elif (self.start_date == self.end_date) and not (
+                self.start_time or self.end_time):
             self.type = 'oneday'
         elif self.start_time:
             if self.start_date == self.end_date:
@@ -150,9 +165,12 @@ class Event(models.Model, translations.TranslatedObjectMixin):
 
         # an event can't end before it starts
         if self.end_date < self.start_date:
-            raise ValidationError(_('The Event cannot end before start (Start date <= End date)'))
-        if (self.end_date == self.start_date) and (self.end_time < self.start_time):
-            raise ValidationError(_('The Event cannot end before start (Start time <= End time)'))
+            raise ValidationError(_(
+                'The Event cannot end before start (Start date <= End date)'))
+        if (self.end_date == self.start_date) and (
+                self.end_time < self.start_time):
+            raise ValidationError(_(
+                'The Event cannot end before start (Start time <= End time)'))
 
 
 class EventTranslation(translations.Translation(Event)):

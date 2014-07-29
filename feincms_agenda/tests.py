@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import date
 
 from django.test import TestCase
 from django.test.client import RequestFactory
@@ -9,16 +9,19 @@ from models import Event
 
 class AgendaTest(TestCase):
     def setUp(self):
-        self.event = Event(active=True, start_date=date(2011, 8, 1), address='bahnhofstrasse 1, 8001 zurich')
+        self.event = Event(
+            active=True,
+            start_date=date(2011, 8, 1),
+            address='bahnhofstrasse 1, 8001 zurich')
         self.event.save()
         self.factory = RequestFactory()
-    
+
     def test_eventpage(self):
         pass
-    
+
     def test_api(self):
         from api import events
-        
+
         request = self.factory.get('api/events/')
         response = events(request)
         self.assertEqual(response.status_code, 200)

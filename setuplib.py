@@ -1,7 +1,9 @@
+# flake8: noqa
+
 import os
 
 
-__all__ = ['find_files']
+__all__ = ['find_packages']
 
 
 def fullsplit(path, result=None):

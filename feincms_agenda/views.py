@@ -16,15 +16,16 @@ def event_list(request, filter):
     # TODO convert to inheritance 2.0?
     return render(request, 'agenda/event_list.html', {
         'object_list': events,
-        })
+    })
 
 
 def event_detail(request, slug):
-    event = get_object_or_404(Event,
+    event = get_object_or_404(
+        Event,
         translations__slug=slug,
         translations__language_code=short_language_code,
-        )
+    )
 
     return render(request, 'agenda/event_detail.html', {
         'object': event,
-        })
+    })

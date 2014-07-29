@@ -1,5 +1,7 @@
 # TODO Really, really, really switch to django_countries
 
+from __future__ import unicode_literals
+
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
@@ -7,8 +9,10 @@ from django.utils.translation import ugettext_lazy as _
 class CountryField(models.CharField):
     def __init__(self, *args, **kwargs):
         kwargs.setdefault('max_length', 2)
-        kwargs.setdefault('choices',
-            sorted(((key, unicode(value)) for key, value in COUNTRIES),
+        kwargs.setdefault(
+            'choices',
+            sorted(
+                ((key, '%s' % value) for key, value in COUNTRIES),
                 key=lambda row: row[1]))
 
         super(CountryField, self).__init__(*args, **kwargs)
